@@ -181,9 +181,10 @@ function navigate() {
 
   checkLocationPermission().then(() => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
-      locationButton.innerHTML = originalHTML;
-      locationButton.disabled = false;
+      getLocationFromIP().finally(() => {
+        locationButton.innerHTML = originalHTML;
+        locationButton.disabled = false;
+      });
       return;
     }
 
@@ -319,11 +320,28 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Add this new function to handle initial location load
+// Add this new function to get location from IP
+async function getLocationFromIP() {
+  try {
+    const response = await fetch('https://ipapi.co/json/');
+    const data = await response.json();
+    
+    if (data.city) {
+      searchDefault(data.city);
+    } else {
+      throw new Error('City not found in IP data');
+    }
+  } catch (error) {
+    console.error('Error getting location from IP:', error);
+    searchDefault('Tehran'); // Final fallback
+  }
+}
+
+// Modify the loadUserLocation function to use IP location as fallback
 async function loadUserLocation() {
   if (!navigator.geolocation) {
     console.log("Geolocation is not supported by your browser");
-    searchDefault("Tehran"); // Fallback to default city
+    await getLocationFromIP(); // Try IP-based location
     return;
   }
 
@@ -347,8 +365,8 @@ async function loadUserLocation() {
       showPosition(position);
     }
   } catch (error) {
-    console.error("Error getting location:", error);
-    searchDefault("Tehran"); // Fallback to default city
+    console.error("Error getting browser location:", error);
+    await getLocationFromIP(); // Try IP-based location as fallback
   }
 }
 
