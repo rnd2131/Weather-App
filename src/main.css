@@ -1,46 +1,79 @@
 html {
   height: 100%;
 }
+
 body {
-  background-image: linear-gradient(to top, #444 0%, #086710 100%);
-  /* background-repeat: no-repeat; */
-  background-size: cover;
+  background-color: #e0e5ec;
+  min-height: 100vh;
+  padding: 20px;
+  margin: 0;
 }
+
 p {
   font-family: "Quicksand", sans-serif;
 }
+
+.card {
+  background: #e0e5ec;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 8px 8px 15px #a3b1c6,
+             -8px -8px 15px #ffffff;
+}
+
 .card-body {
-  box-shadow: 5px 2px 20px rgb(46, 46, 59);
+  padding: 25px;
 }
 
 form.searchBox {
   margin: 20px auto;
-  width: 260px;
+  width: 90%;
+  max-width: 300px;
+  position: relative;
 }
 
 .searchBox input {
-  border-radius: 20px 0 0 20px;
-}
-.searchBox .btn-primary {
-  width: 50px;
+  background: #e0e5ec;
+  border: none;
+  border-radius: 15px;
+  padding: 12px 20px;
+  width: 100%;
+  box-shadow: inset 4px 4px 8px #a3b1c6,
+              inset -4px -4px 8px #ffffff;
+  color: #5a6275;
+  transition: all 0.3s ease;
 }
 
-.searchBox .btn-secondary {
-  width: 40px;
-  border-radius: 0 20px 20px 0;
-  text-align: center;
-  padding: 0;
+.searchBox input:focus {
+  outline: none;
+  box-shadow: inset 6px 6px 10px #a3b1c6,
+              inset -6px -6px 10px #ffffff;
 }
-.locationIcon {
-  width: 50%;
-  height: auto;
+
+.searchBox .btn-primary {
+  background: #e0e5ec;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 15px;
+  margin-left: 10px;
+  box-shadow: 5px 5px 10px #a3b1c6,
+             -5px -5px 10px #ffffff;
+  color: #5a6275;
+  transition: all 0.3s ease;
+}
+
+.searchBox .btn-primary:active {
+  box-shadow: inset 3px 3px 6px #a3b1c6,
+              inset -3px -3px 6px #ffffff;
 }
 
 .currentCity {
   color: #5a6275;
   text-align: center;
-  font-size: 30px;
-  font-weight: 500;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 20px 0;
+  text-shadow: 2px 2px 3px #a3b1c6;
 }
 
 .todayInfo {
@@ -55,16 +88,19 @@ form.searchBox {
 }
 
 .todayTempInfo {
-  justify-content: center;
+  background: #e0e5ec;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 15px 0;
+  box-shadow: 5px 5px 10px #a3b1c6,
+             -5px -5px 10px #ffffff;
 }
 
 div .todayTemp {
-  display: inline;
-  text-align: right;
-  font-size: 40px;
+  font-size: 36px;
   font-weight: 600;
-  padding: 0;
-  max-width: 100px;
+  color: #5a6275;
+  text-shadow: 2px 2px 3px #a3b1c6;
 }
 
 div .unit {
@@ -76,18 +112,15 @@ div .unit {
 }
 .unit a {
   text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-.todayTempInfo .active {
   color: #5a6275;
-  cursor: default;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
-.todayTempInfo .active {
-  text-decoration: none;
+
+.unit .active {
+  box-shadow: inset 3px 3px 6px #a3b1c6,
+              inset -3px -3px 6px #ffffff;
 }
 
 .todayIcon {
@@ -96,13 +129,23 @@ a:hover {
 }
 
 .todayExtra {
-  font-size: 16px;
-  text-align: center;
-  font-weight: 500;
-  line-height: 3;
+  background: #e0e5ec;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 10px;
+  box-shadow: 4px 4px 8px #a3b1c6,
+             -4px -4px 8px #ffffff;
+  color: #5a6275;
 }
 
 .dayX {
+  background: #e0e5ec;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 10px;
+  box-shadow: 4px 4px 8px #a3b1c6,
+             -4px -4px 8px #ffffff;
+  color: #5a6275;
   text-align: center;
   line-height: 3;
 }
@@ -120,9 +163,9 @@ a:hover {
   font-weight: 400;
 }
 .weather_forecast {
-  justify-content: center;
-  align-items: center;
+  margin-top: 25px;
 }
+
 .footer {
   font-weight: 600;
   font-size: 14px;
@@ -134,31 +177,29 @@ a:hover {
 
 
 .suggestions {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-  max-height: 150px;
-  overflow-y: auto;
-  z-index: 1000;
-  display: none;
+  background: #e0e5ec;
+  border: none;
+  border-radius: 12px;
+  margin-top: 5px;
+  box-shadow: inset 3px 3px 6px #a3b1c6,
+              inset -3px -3px 6px #ffffff;
+  max-height: 200px;
 }
 
 .suggestion-item {
-  padding: 8px 12px;
-  cursor: pointer;
+  padding: 12px 20px;
+  color: #5a6275;
+  transition: all 0.3s ease;
 }
 
 .suggestion-item:hover {
-  background-color: #f8f9fa;
+  background: linear-gradient(145deg, #e0e5ec, #ffffff);
+  box-shadow: 2px 2px 4px #a3b1c6;
 }
 
 
 .fa-spinner {
+  color: #5a6275;
   animation: spin 1s linear infinite;
 }
 
@@ -169,6 +210,14 @@ a:hover {
 
 /* Add this to your existing CSS */
 .alert {
+  background: #e0e5ec;
+  border: none;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 15px 0;
+  box-shadow: 4px 4px 8px #a3b1c6,
+             -4px -4px 8px #ffffff;
+  color: #5a6275;
   display: none;
   margin-bottom: 1rem;
   transition: opacity 0.3s ease-in-out;
@@ -182,4 +231,24 @@ a:hover {
   background-color: #cce5ff;
   border-color: #b8daff;
   color: #004085;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+    margin: 10px;
+  }
+  
+  .todayExtra {
+    margin: 5px;
+    padding: 10px;
+  }
+  
+  div .todayTemp {
+    font-size: 32px;
+  }
+  
+  .currentCity {
+    font-size: 24px;
+  }
 }
