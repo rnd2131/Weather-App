@@ -73,6 +73,10 @@ form.searchBox {
   transition: all 0.3s ease;
 }
 
+.searchBox .btn-secondary {
+  margin-left: 10px;
+}
+
 .searchBox .btn-primary:active {
   box-shadow: inset 3px 3px 6px #a3b1c6,
               inset -3px -3px 6px #ffffff;
@@ -266,6 +270,55 @@ div .unit {
   background-color: #cce5ff;
   border-color: #b8daff;
   color: #004085;
+}
+
+/* Update button styles */
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 15px;
+  color: #5a6275;
+  background: #e0e5ec;
+  box-shadow: 5px 5px 10px #a3b1c6,
+             -5px -5px 10px #ffffff;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background: #e0e5ec;
+  color: #5a6275;
+  box-shadow: 4px 4px 8px #a3b1c6,
+             -4px -4px 8px #ffffff;
+}
+
+.btn:active {
+  background: #e0e5ec;
+  box-shadow: inset 3px 3px 6px #a3b1c6,
+              inset -3px -3px 6px #ffffff;
+}
+
+.btn-close {
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 3px 3px 6px #a3b1c6,
+             -3px -3px 6px #ffffff;
+}
+
+.btn-close:hover {
+  background: #d1d7de;
+}
+
+.btn-close:active {
+  box-shadow: inset 2px 2px 4px #a3b1c6,
+              inset -2px -2px 4px #ffffff;
+}
+
+/* Update alert dismiss button */
+.alert .btn-close {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /* Responsive adjustments */
