@@ -92,7 +92,15 @@ function displayCelsius(event) {
 function searchDefault(city) {
   let apiKey = "6c60fabe649d33c314498b8aba31de6b";
   let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-  axios.get(apiUrl).then(showResult);
+  
+  // Store the city in localStorage
+  localStorage.setItem('lastSearchedCity', city);
+  
+  axios.get(apiUrl).then(showResult).catch(error => {
+    console.error("Error fetching weather data:", error);
+    // If error, remove from localStorage
+    localStorage.removeItem('lastSearchedCity');
+  });
 }
 
 function searchPosition(event) {
@@ -274,13 +282,13 @@ const cities = [
 ];
 
 function showSuggestions(input) {
-  const inputValue = input.toLowerCase();
+  const inputValue = input.trim().toLowerCase();
   const suggestionsDiv = document.querySelector("#suggestions");
   
   // Clear previous suggestions
   suggestionsDiv.innerHTML = "";
   
-  if (inputValue.length < 2) {
+  if (!inputValue) {
     suggestionsDiv.style.display = "none";
     return;
   }
@@ -288,7 +296,7 @@ function showSuggestions(input) {
   // Filter cities based on input
   const matchedCities = cities.filter(city => 
     city.toLowerCase().includes(inputValue)
-  );
+  ).slice(0, 5); // Limit to top 5 suggestions
 
   if (matchedCities.length > 0) {
     suggestionsDiv.style.display = "block";
@@ -297,7 +305,8 @@ function showSuggestions(input) {
       div.className = "suggestion-item";
       div.textContent = city;
       div.addEventListener("click", () => {
-        document.querySelector("#search-text").value = city;
+        const searchInput = document.querySelector("#search-text");
+        searchInput.value = city;
         suggestionsDiv.style.display = "none";
         searchDefault(city);
       });
@@ -319,5 +328,46 @@ document.addEventListener("click", (e) => {
   }
 });
 
-searchDefault("Tehran");
-document.addEventListener('DOMContentLoaded', checkLocationPermission);
+document.addEventListener('DOMContentLoaded', () => {
+  checkLocationPermission();
+  
+  // Get last searched city from localStorage, default to "Tehran" if none
+  const lastCity = localStorage.getItem('lastSearchedCity') || "Tehran";
+  searchDefault(lastCity);
+});
+
+function handleKeyboardNavigation(e) {
+  const suggestionsDiv = document.querySelector("#suggestions");
+  const items = suggestionsDiv.getElementsByClassName("suggestion-item");
+  let selectedIndex = Array.from(items).findIndex(item => item.classList.contains('selected'));
+
+  switch(e.key) {
+    case 'ArrowDown':
+      e.preventDefault();
+      if (selectedIndex < items.length - 1) {
+        if (selectedIndex >= 0) items[selectedIndex].classList.remove('selected');
+        items[selectedIndex + 1].classList.add('selected');
+      }
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      if (selectedIndex > 0) {
+        items[selectedIndex].classList.remove('selected');
+        items[selectedIndex - 1].classList.add('selected');
+      }
+      break;
+    case 'Enter':
+      const selectedItem = document.querySelector('.suggestion-item.selected');
+      if (selectedItem) {
+        e.preventDefault();
+        const city = selectedItem.textContent;
+        document.querySelector("#search-text").value = city;
+        suggestionsDiv.style.display = "none";
+        searchDefault(city);
+      }
+      break;
+  }
+}
+
+// Add this to your existing event listeners
+searchInput.addEventListener('keydown', handleKeyboardNavigation);
