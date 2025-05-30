@@ -46,6 +46,7 @@
                   class="btn-close"
                   data-bs-dismiss="alert"
                   aria-label="Close"
+                  
                 ></button>
               </div>
               <form class="input-group mb-3 searchBox" id="search-form">
@@ -60,6 +61,7 @@
                   class="btn-primary"
                   id="search-button"
                   type="button"
+                  style="border-radius: 0px 15px 15px 0;"
                 >
                   <i class="fas fa-search"></i>
                 </button>
@@ -67,6 +69,7 @@
                   class="btn-secondary"
                   id="location-button"
                   type="button"
+                  style="display: none;"
                 >
                   <i class="fas fa-location"></i>
                 </button>
@@ -82,14 +85,15 @@
                 <div class="col-md-6 unit">
                   <a href="#" id="unit-c" class="active">°C</a> |
                   <a href="#" id="unit-f">°F</a>
-                </div>
-              </div>
-              <p class="todayInfo">
-                <span id="description"></span>
-                <span>
-                  <img src="" alt="icon" class="todayIcon" id="today-icon"
-                /></span>
+                </div>              
+                <p class="todayInfo">
+                  <span id="description"></span>
+                  <span>
+                    <img src="" alt="icon" class="todayIcon" id="today-icon"
+                  /></span>
               </p>
+              </div>
+
               <div class="row">
                 <div class="col-md-4">
                   <p class="todayExtra" id="feels"></p>
