@@ -319,42 +319,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Add this new function to handle initial location load
-async function loadUserLocation() {
-  if (!navigator.geolocation) {
-    console.log("Geolocation is not supported by your browser");
-    searchDefault("Tehran"); // Fallback to default city
-    return;
-  }
+searchDefault("Tehran");
+document.addEventListener('DOMContentLoaded', checkLocationPermission);
 
-  try {
-    const position = await new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
-      });
-    });
-
-    const cityName = await reverseGeocode(
-      position.coords.latitude,
-      position.coords.longitude
-    );
-    
-    if (cityName) {
-      searchDefault(cityName);
-    } else {
-      showPosition(position);
-    }
-  } catch (error) {
-    console.error("Error getting location:", error);
-    searchDefault("Tehran"); // Fallback to default city
-  }
-}
-
-// Replace the last line of your file
-// Instead of: searchDefault("Tehran");
-document.addEventListener('DOMContentLoaded', async () => {
-  await checkLocationPermission();
-  loadUserLocation();
-});
