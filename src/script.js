@@ -110,8 +110,117 @@ function showPosition(position) {
   axios.get(apiUrl).then(showResult);
 }
 
+function handleLocationError(error) {
+  let errorMessage;
+  switch(error.code) {
+    case error.PERMISSION_DENIED:
+      errorMessage = "Please enable location access to use this feature.";
+      break;
+    case error.POSITION_UNAVAILABLE:
+      errorMessage = "Location information is unavailable.";
+      break;
+    case error.TIMEOUT:
+      errorMessage = "Location request timed out.";
+      break;
+    default:
+      errorMessage = "An unknown error occurred.";
+  }
+  
+  alert(errorMessage);
+}
+
+async function reverseGeocode(latitude, longitude) {
+  const apiKey = "6c60fabe649d33c314498b8aba31de6b";
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${apiKey}`
+    );
+    const data = await response.json();
+    return data[0].name;
+  } catch (error) {
+    console.error("Error getting city name:", error);
+    return null;
+  }
+}
+
+async function checkLocationPermission() {
+  try {
+    const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
+    const permissionAlert = document.querySelector('#permission-alert');
+    
+    switch (permissionStatus.state) {
+      case 'prompt':
+        permissionAlert.classList.add('show');
+        break;
+      case 'denied':
+        permissionAlert.innerHTML = `
+          <strong>Location Blocked</strong> - Please enable location access in your browser settings.
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        permissionAlert.classList.remove('alert-info');
+        permissionAlert.classList.add('alert-warning', 'show');
+        break;
+      case 'granted':
+        permissionAlert.classList.remove('show');
+        break;
+    }
+
+    permissionStatus.addEventListener('change', () => {
+      checkLocationPermission();
+    });
+  } catch (error) {
+    console.error('Error checking permission:', error);
+  }
+}
+
 function navigate() {
-  navigator.geolocation.getCurrentPosition(showPosition);
+  const locationButton = document.querySelector("#location-button");
+  const originalHTML = locationButton.innerHTML;
+  locationButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  locationButton.disabled = true;
+
+  checkLocationPermission().then(() => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      locationButton.innerHTML = originalHTML;
+      locationButton.disabled = false;
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const cityName = await reverseGeocode(
+            position.coords.latitude,
+            position.coords.longitude
+          );
+          
+          if (cityName) {
+            searchDefault(cityName);
+          } else {
+            showPosition(position);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          showPosition(position);
+        } finally {
+          // Reset button state
+          locationButton.innerHTML = originalHTML;
+          locationButton.disabled = false;
+        }
+      },
+      (error) => {
+        handleLocationError(error);
+        locationButton.innerHTML = originalHTML;
+        locationButton.disabled = false;
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      }
+    );
+  });
 }
 
 let currentDate = document.querySelector("#current-date");
@@ -145,4 +254,70 @@ fahrenheitLink.addEventListener("click", displayFahrenheit);
 let celsiusLink = document.querySelector("#unit-c");
 celsiusLink.addEventListener("click", displayCelsius);
 
+const cities = [
+  "New York", "London", "Paris", "Tokyo", "Sydney", "Dubai", "Singapore",
+  "Hong Kong", "Moscow", "Berlin", "Rome", "Madrid", "Toronto", "Seoul",
+  "Bangkok", "Mumbai", "Istanbul", "Tehran", "Beijing", "Shanghai", 
+  "Amsterdam", "Vienna", "Prague", "Stockholm", "Oslo", "Copenhagen",
+  "Helsinki", "Brussels", "Lisbon", "Athens", "Warsaw", "Budapest",
+  "Dublin", "Edinburgh", "Barcelona", "Milan", "Venice", "Munich",
+  "Frankfurt", "Hamburg", "Zurich", "Geneva", "Montreal", "Vancouver",
+  "Mexico City", "Rio de Janeiro", "São Paulo", "Buenos Aires", "Lima",
+  "Santiago", "Cairo", "Cape Town", "Johannesburg", "Lagos", "Nairobi",
+  "Casablanca", "Delhi", "Bangalore", "Chennai", "Kolkata", "Jakarta",
+  "Manila", "Kuala Lumpur", "Ho Chi Minh City", "Melbourne", "Brisbane",
+  "Auckland", "Wellington", "San Francisco", "Los Angeles", "Chicago",
+  "Miami", "Boston", "Washington DC", "Seattle", "Las Vegas", "Denver",
+  "Mashhad", "Isfahan", "Karaj", "Shiraz", "Tabriz", "Qom", "Ahvaz", "Kermanshah", "Urmia",
+  "Rasht", "Zahedan", "Kerman", "Hamadan", "Yazd", "Ardabil", "Bandar Abbas", "Arak", "Qazvin", "Zanjan",
+  "Sanandaj", "Khorramabad", "Gorgan", "Sari", "Bojnord", "Birjand", "Ilam", "Yasuj", "Semnan", "Shahrekord"
+];
+
+function showSuggestions(input) {
+  const inputValue = input.toLowerCase();
+  const suggestionsDiv = document.querySelector("#suggestions");
+  
+  // Clear previous suggestions
+  suggestionsDiv.innerHTML = "";
+  
+  if (inputValue.length < 2) {
+    suggestionsDiv.style.display = "none";
+    return;
+  }
+
+  // Filter cities based on input
+  const matchedCities = cities.filter(city => 
+    city.toLowerCase().includes(inputValue)
+  );
+
+  if (matchedCities.length > 0) {
+    suggestionsDiv.style.display = "block";
+    matchedCities.forEach(city => {
+      const div = document.createElement("div");
+      div.className = "suggestion-item";
+      div.textContent = city;
+      div.addEventListener("click", () => {
+        document.querySelector("#search-text").value = city;
+        suggestionsDiv.style.display = "none";
+        searchDefault(city);
+      });
+      suggestionsDiv.appendChild(div);
+    });
+  } else {
+    suggestionsDiv.style.display = "none";
+  }
+}
+
+// Add this with your other event listeners
+let searchInput = document.querySelector("#search-text");
+searchInput.addEventListener("input", (e) => showSuggestions(e.target.value));
+
+// Hide suggestions when clicking outside
+document.addEventListener("click", (e) => {
+  if (!e.target.matches("#search-text")) {
+    document.querySelector("#suggestions").style.display = "none";
+  }
+});
+
 searchDefault("Tehran");
+document.addEventListener('DOMContentLoaded', checkLocationPermission);
